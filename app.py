@@ -269,6 +269,9 @@ while run:
     if state == 'menu':
         draw_text('2048', logo_font, (255, 100, 100), 360, 70)
         draw_text('Made by Aidyn Fatikh', font, 'black', 10, 700)
+        draw_text(f'Highscore(4x4): {high_score1}', font, 'black', 550, 180)
+        draw_text(f'Highscore(5x5): {high_score2}', font, 'black', 550, 280)
+        draw_text(f'Highscore(6x6): {high_score3}', font, 'black', 550, 380)
         btn1.draw()
         btn2.draw()
         btn3.draw()
