@@ -33,12 +33,6 @@ colors = {0: (204, 192, 179),
           'other': (0, 0, 0),
           'bg': (187, 173, 160)}
 
-
-file = open('high_score', 'r')
-init_high = int(file.readline())
-file.close()
-high_score = init_high
-
 bot1_btn1 = button.Button('Bot ON', 100, 50, (240, 410), 1, screen, font)
 bot1_btn2 = button.Button('Bot OFF', 100, 50, (240, 470), 1, screen, font)
 
@@ -58,6 +52,7 @@ def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
+
 def draw_over():
     pygame.draw.rect(screen, 'black', [250, 240, 300, 100], 0, 10)
     game_over_text1 = font.render('Game Over!', True, 'white')
@@ -66,20 +61,19 @@ def draw_over():
     screen.blit(game_over_text2, (280, 300))
 
 
-def board(size, score, seconds):
+def board(size, score, seconds, high_score):
     pygame.draw.rect(screen, colors['bg'], [(800-size*100)/2, 0, size*100, size*100], 0, 10)
     score_text = font.render(f'Score:  {score}', True, 'black')
     high_score_text = font.render(f'High score: {high_score}', True, 'black')
-    timer = font.render(f'Time: {seconds} seconds', True, 'black')
+    clock = font.render(f'Time: {seconds} seconds', True, 'black')
     screen.blit(score_text, (10, 10 + size*100))
     screen.blit(high_score_text, (10, 50 + size*100))
-    screen.blit(timer, (10, 90 + size*100))
+    screen.blit(clock, (10, 90 + size*100))
 
     instructions = font.render('Press R to restart', True, 'black')
-    instructions2 = font.render('Press ESC to return to menu (make sure you click Bot OFF)', True, 'black')
+    instructions2 = font.render('Press ESC to return to menu (make sure Bot is OFF)', True, 'black')
     screen.blit(instructions, (10, 130 + size*100))
     screen.blit(instructions2, (10, 170 + size*100))
-
 
 
 def new_board(board, size):
@@ -135,7 +129,8 @@ def take_turn(direction, board, size, score):
                     if shift > 0:
                         board[i - shift][j] = board[i][j]
                         board[i][j] = 0
-                    if board[i - shift - 1][j] == board[i - shift][j] and not merged[i - shift][j] and not merged[i - shift - 1][j]:
+                    if board[i - shift - 1][j] == board[i - shift][j] \
+                            and not merged[i - shift][j] and not merged[i - shift - 1][j]:
                         board[i - shift - 1][j] *= 2
                         score += board[i-shift-1][j]
                         board[i - shift][j] = 0
@@ -152,7 +147,8 @@ def take_turn(direction, board, size, score):
                     if shift > 0:
                         board[i - shift][j] = board[i][j]
                         board[i][j] = 0
-                    if board[i - shift - 1][j] == board[i - shift][j] and not merged[i - shift][j] and not merged[i - shift - 1][j]:
+                    if board[i - shift - 1][j] == board[i - shift][j] \
+                            and not merged[i - shift][j] and not merged[i - shift - 1][j]:
                         board[i - shift - 1][j] *= 2
                         score += board[i - shift - 1][j]
                         board[i - shift][j] = 0
@@ -169,7 +165,8 @@ def take_turn(direction, board, size, score):
                     board[size-2 - i + shift][j] = board[size-2 - i][j]
                     board[size-2 - i][j] = 0
                 if size-1 - i + shift <= size-1:
-                    if board[size-2 - i + shift][j] == board[size-1 - i + shift][j] and not merged[size-1 - i + shift][j] and not merged[size-2 - i + shift][j]:
+                    if board[size-2 - i + shift][j] == board[size-1 - i + shift][j] \
+                            and not merged[size-1 - i + shift][j] and not merged[size-2 - i + shift][j]:
                         board[size-1 - i + shift][j] *= 2
                         score += board[size-1 - i + shift][j]
                         board[size-2 - i + shift][j] = 0
@@ -185,13 +182,14 @@ def take_turn(direction, board, size, score):
                 if shift > 0:
                     board[i][j - shift] = board[i][j]
                     board[i][j] = 0
-                if board[i][j - shift] == board[i][j - shift - 1] and not merged[i][j - shift - 1] and not merged[i][j - shift]:
+                if board[i][j - shift] == board[i][j - shift - 1] \
+                        and not merged[i][j - shift - 1] and not merged[i][j - shift]:
                     board[i][j - shift - 1] *= 2
                     score += board[i][j - shift - 1]
                     board[i][j - shift] = 0
                     merged[i][j - shift - 1] = True
 
-    elif direction  == 'RIGHT':
+    elif direction == 'RIGHT':
         for i in range(size):
             for j in range(size):
                 shift = 0
@@ -202,7 +200,8 @@ def take_turn(direction, board, size, score):
                     board[i][size-1 - j + shift] = board[i][3 - j]
                     board[i][size-1 - j] = 0
                 if size - j + shift <= size-1:
-                    if board[i][size - j + shift] == board[i][size-1 - j + shift] and not merged[i][size - j + shift] and not merged[i][size-1 - j + shift]:
+                    if board[i][size - j + shift] == board[i][size-1 - j + shift] and not merged[i][size - j + shift] \
+                            and not merged[i][size-1 - j + shift]:
                         board[i][size - j + shift] *= 2
                         score += board[i][size - j + shift]
                         board[i][size-1 - j + shift] = 0
@@ -211,6 +210,10 @@ def take_turn(direction, board, size, score):
 
 
 # board 1
+file1 = open('high_score1', 'r')
+init_high1 = int(file1.readline())
+file1.close()
+high_score1 = init_high1
 board_values1 = [[0 for _ in range(4)] for _ in range(4)]
 direction1 = ''
 count1 = 0
@@ -224,6 +227,10 @@ player1 = True
 game_over1 = False
 
 # board 2
+file2 = open('high_score2', 'r')
+init_high2 = int(file2.readline())
+file2.close()
+high_score2 = init_high2
 board_values2 = [[0 for _ in range(5)] for _ in range(5)]
 direction2 = ''
 count2 = 0
@@ -237,6 +244,10 @@ player2 = True
 game_over2 = False
 
 # board 3
+file3 = open('high_score3', 'r')
+init_high3 = int(file3.readline())
+file3.close()
+high_score3 = init_high3
 board_values3 = [[0 for _ in range(6)] for _ in range(6)]
 direction3 = ''
 count3 = 0
@@ -269,7 +280,7 @@ while run:
         state = 'game3'
 
     if state == 'game1':
-        board(4, score1, seconds1)
+        board(4, score1, seconds1, high_score1)
         draw_pieces(board_values1, 4)
         seconds1 = math.trunc((start1 - end1) * (-1))
         bot1_btn1.draw()
@@ -286,11 +297,11 @@ while run:
 
         if game_over1:
             draw_over()
-            if high_score > init_high:
-                file = open('high_score', 'w')
-                file.write(f'{high_score}')
-                file.close()
-                init_high = high_score
+            if high_score1 > init_high1:
+                file1 = open('high_score1', 'w')
+                file1.write(f'{high_score1}')
+                file1.close()
+                init_high1 = high_score1
 
         if bot1_btn1.check_click():
             bot1 = True
@@ -318,6 +329,13 @@ while run:
                             ends1 = 0
                             direction1 = ''
                             game_over1 = False
+            if score1 > high_score1:
+                high_score1 = score1
+                if high_score1 > init_high1:
+                    file1 = open('high_score1', 'w')
+                    file1.write(f'{high_score1}')
+                    file1.close()
+                    init_high1 = high_score1
         end1 = time.time()
         if player1:
             for action in pygame.event.get():
@@ -355,15 +373,15 @@ while run:
                             direction1 = ''
                             game_over1 = False
 
-            if score1 > high_score:
-                high_score = score1
-                if high_score > init_high:
-                    file = open('high_score', 'w')
-                    file.write(f'{high_score}')
-                    file.close()
-                    init_high1= high_score
+            if score1 > high_score1:
+                high_score1 = score1
+                if high_score1 > init_high1:
+                    file1 = open('high_score1', 'w')
+                    file1.write(f'{high_score1}')
+                    file1.close()
+                    init_high1 = high_score1
     if state == 'game2':
-        board(5, score2, seconds2)
+        board(5, score2, seconds2, high_score2)
         draw_pieces(board_values2, 5)
         seconds2 = math.trunc((start2 - end2) * (-1))
         bot2_btn1.draw()
@@ -380,11 +398,11 @@ while run:
 
         if game_over2:
             draw_over()
-            if high_score > init_high:
-                file = open('high_score', 'w')
-                file.write(f'{high_score}')
-                file.close()
-                init_high = high_score
+            if high_score2 > init_high2:
+                file2 = open('high_score2', 'w')
+                file2.write(f'{high_score2}')
+                file2.close()
+                init_high2 = high_score2
 
         if bot2_btn1.check_click():
             bot2 = True
@@ -412,6 +430,14 @@ while run:
                             ends2 = 0
                             direction2 = ''
                             game_over2 = False
+
+            if score2 > high_score2:
+                high_score2 = score2
+                if high_score2 > init_high2:
+                    file2 = open('high_score2', 'w')
+                    file2.write(f'{high_score2}')
+                    file2.close()
+                    init_high2 = high_score2
         end2 = time.time()
         if player2:
             for action in pygame.event.get():
@@ -450,15 +476,15 @@ while run:
                             direction2 = ''
                             game_over2 = False
 
-            if score2 > high_score:
-                high_score = score2
-                if high_score > init_high:
-                    file = open('high_score', 'w')
-                    file.write(f'{high_score}')
-                    file.close()
-                    init_high1 = high_score
+            if score2 > high_score2:
+                high_score2 = score2
+                if high_score2 > init_high2:
+                    file2 = open('high_score2', 'w')
+                    file2.write(f'{high_score2}')
+                    file2.close()
+                    init_high2 = high_score2
     if state == 'game3':
-        board(6, score3, seconds3)
+        board(6, score3, seconds3, high_score3)
         draw_pieces(board_values3, 6)
         seconds3 = math.trunc((start3 - end3) * (-1))
         bot3_btn1.draw()
@@ -475,11 +501,11 @@ while run:
 
         if game_over3:
             draw_over()
-            if high_score > init_high:
-                file = open('high_score', 'w')
-                file.write(f'{high_score}')
-                file.close()
-                init_high = high_score
+            if high_score3 > init_high3:
+                file3 = open('high_score3', 'w')
+                file3.write(f'{high_score3}')
+                file3.close()
+                init_high3 = high_score3
 
         if bot3_btn1.check_click():
             bot3 = True
@@ -507,6 +533,14 @@ while run:
                             ends3 = 0
                             direction3 = ''
                             game_over3 = False
+
+            if score3 > high_score3:
+                high_score3 = score3
+                if high_score3 > init_high3:
+                    file3 = open('high_score3', 'w')
+                    file3.write(f'{high_score3}')
+                    file3.close()
+                    init_high3 = high_score3
         end3 = time.time()
         if player3:
             for action in pygame.event.get():
@@ -545,13 +579,13 @@ while run:
                             direction3 = ''
                             game_over3 = False
 
-            if score3 > high_score:
-                high_score = score3
-                if high_score > init_high:
-                    file = open('high_score', 'w')
-                    file.write(f'{high_score}')
-                    file.close()
-                    init_high1 = high_score
+            if score3 > high_score3:
+                high_score3 = score3
+                if high_score3 > init_high3:
+                    file3 = open('high_score3', 'w')
+                    file3.write(f'{high_score3}')
+                    file3.close()
+                    init_high3 = high_score3
 
     for action in pygame.event.get():
         if action.type == pygame.QUIT:
